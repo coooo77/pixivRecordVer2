@@ -1,5 +1,5 @@
 const { puppeteerSetting, url } = require('./config/config.js')
-const { login } = require('./config/domSelector')
+const { login, notifications } = require('./config/domSelector')
 const { app } = require('./config/announce')
 const helper = require('./util/helper')
 const puppeteer = require('puppeteer-core');
@@ -19,7 +19,16 @@ const puppeteer = require('puppeteer-core');
     }
 
     // 開始檢查實況
+    await helper.wait(2000)
     helper.announcer(app.startToFetchStream)
+    const { nextPageSelector, StreamingUser } = notifications
+    await page.waitForSelector(nextPageSelector)
+    const nextPageBtn = await page.$(nextPageSelector).catch(e => console.error(e))
+    if (nextPageBtn) nextPageBtn.click()
+
+    // 存取正在實況者數量    
+    const numOfStreamingUser = await helper.fetchNumOfStreamingUser(page, StreamingUser)
+    console.log('numOfStreamingUser>>>', numOfStreamingUser)
 
     console.log('DONE!')
   } catch (error) {

@@ -1,4 +1,4 @@
-const { login, logout } = require('../config/domSelector')
+const { login } = require('../config/domSelector')
 require('dotenv').config()
 
 const helper = {
@@ -11,6 +11,7 @@ const helper = {
   async login(page) {
     const { loginBtnSelector, loginAccountInput, loginPasswordInput, loginOption } = login
     await page.waitForSelector(loginOption, { visible: true })
+    await helper.wait(2000)
     await Promise.all([
       page.hover(loginOption),
       page.click(loginOption),
@@ -21,10 +22,15 @@ const helper = {
     await page.keyboard.type(process.env.PIXIV_ACCOUNT)
     await page.click(loginPasswordInput)
     await page.keyboard.type(process.env.PIXIV_PASSWORD)
+    await helper.wait(2000)
     await Promise.all([
       page.click(loginBtnSelector),
       page.waitForNavigation()
     ])
+  },
+  async fetchNumOfStreamingUser(page, selector) {
+    const numOfStreamingUser = await page.$$eval(selector, node => node.length)
+    return numOfStreamingUser
   }
 }
 

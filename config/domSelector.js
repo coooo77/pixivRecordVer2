@@ -4,5 +4,9 @@ module.exports = {
     loginAccountInput: '#LoginComponent > form > div.input-field-group > div:nth-child(1) > input[type=text]',
     loginPasswordInput: '#LoginComponent > form > div.input-field-group > div:nth-child(2) > input[type=password]',
     loginBtnSelector: '#LoginComponent > form > button'
+  },
+  notifications: {
+    nextPageSelector: '#AppContent > div.Notifications > div.Wall > div > div.WallLoadNext > button',
+    StreamingUser: 'div.NotificationBody > span > a:nth-child(2)'
   }
 }
