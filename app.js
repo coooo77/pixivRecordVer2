@@ -1,4 +1,4 @@
-const { puppeteerSetting, url } = require('./config/config.js')
+const { puppeteerSetting, url, userFilter, addNewUser } = require('./config/config.js')
 const { login, notifications } = require('./config/domSelector')
 const { app } = require('./config/announce')
 const helper = require('./util/helper')
@@ -34,6 +34,22 @@ const puppeteer = require('puppeteer-core');
         helper.getStreamInfo(page, StreamingUser),
         helper.getJSObjData('isStreaming')
       ])
+
+      // 比較isRecoding清單，如果實況者不在清單內就開始錄影
+      for (streamer of streamersInfo){        
+        if (helper.notCataloged(isRecording, streamer)){
+          // 點選Id，存取dataset-user-id相對應的userId
+          const [fetchData, usersData] = await Promise.all([
+            helper.fetchStreamingUser(page, streamer),
+            helper.getJSObjData('usersData')
+          ])
+          const [fetchName, fetchUserId, fetchPixivEngId] = fetchData
+          const [user] = usersData.filter(user => user.userId === fetchUserId)
+          await helper.upDateUser(usersData, user, fetchData, addNewUser, userFilter)
+
+          //TODO:開始錄製
+        }
+      }
     }
 
     console.log('DONE!')

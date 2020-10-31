@@ -14,5 +14,7 @@ module.exports = {
     reTryInterval: 30,
     maxTryTimes: 60,
     prefix: '@'
-  }
+  },
+  userFilter: false,
+  addNewUser: true
 }
