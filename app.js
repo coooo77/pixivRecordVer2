@@ -28,7 +28,13 @@ const puppeteer = require('puppeteer-core');
 
     // 存取正在實況者數量    
     const numOfStreamingUser = await helper.fetchNumOfStreamingUser(page, StreamingUser)
-    console.log('numOfStreamingUser>>>', numOfStreamingUser)
+    if (numOfStreamingUser !== 0) {
+      // 讀取所有實況者ID與實況網址、有誰正在實況的紀錄檔案
+      const [streamersInfo, isRecording] = await Promise.all([
+        helper.getStreamInfo(page, StreamingUser),
+        helper.getJSObjData('isStreaming')
+      ])
+    }
 
     console.log('DONE!')
   } catch (error) {
