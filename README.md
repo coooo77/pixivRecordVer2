@@ -11,7 +11,7 @@ git clone https://github.com/coooo77/pixivRecordVer2
 2. 以指令cd移動至pixivRecordVer2資料夾底下
 
 ```console
-cd 下載位置/pixivRecordVer2
+cd pixivRecordVer2
 ```
 
 3. 根據環境建置與需求安裝軟體與套件
