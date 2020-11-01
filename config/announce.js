@@ -33,5 +33,24 @@ module.exports = {
     startToFetch: 'Start To fetch users data, it may takes few minutes ...',
     fetchFinished: 'Fetch progress end',
     numOfFetchedUser: msg => `${msg} users recorded in usersData.json, stored in dir model.`
-  }
+  },
+  init: {
+    recorder: {
+      isNotExist: 'Directory recorder is not exist',
+      startToCreateDirectory: 'Start to create recorder directory'
+    },
+    model: {
+      isNotExist: 'Directory model is not exist',
+      startToCreateDirectory: 'Start to create model directory'
+    },
+    isStreaming: {
+      isNotExist: 'isStreaming.json is not exist',
+      startToCreate: 'Start to create isStreaming.json'
+    },
+    usersData: {
+      isNotExist: 'UsersData.json is not exist',
+      startToCreate: 'Start to create usersData.json'
+    },
+    initiationIsFinished: 'Initiation finished'
+  },
 }

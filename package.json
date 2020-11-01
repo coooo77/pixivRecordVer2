@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "node app.js",
-    "fetch": "node getPixivFollowings.js"
+    "fetch": "node getPixivFollowings.js",
+    "init": "node init.js"
   },
   "author": "coooo77",
   "license": "ISC",
