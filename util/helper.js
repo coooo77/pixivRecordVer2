@@ -1,8 +1,9 @@
 const { login, fetchTarget } = require('../config/domSelector')
 const { loginBtnSelector, loginAccountInput, loginPasswordInput, loginOption } = login
 const { app } = require('../config/announce')
-const { batchFile, userData, streamType } = app
+const { batchFile, userData, streamType, streamRecord } = app
 const { recordSetting } = require('../config/config')
+const { reTryInterval, maxTryTimes, prefix } = recordSetting
 const fs = require('fs')
 const cp = require('child_process')
 require('dotenv').config()
@@ -106,7 +107,7 @@ const helper = {
         name: user.userId === fetchUserId ? fetchName : user.name,
         pixivEngId: user.userId === fetchUserId ? fetchPixivEngId : user.name
       }))
-      await helper.saveUserData(usersData)
+      await helper.saveJSObjData(usersData)
     } else if (!user && addNewUser && !userFilter) {
       helper.announcer(userData.newUserFound(fetchName))
       usersData.push({
@@ -116,19 +117,27 @@ const helper = {
         pixivEngId: fetchPixivEngId,
         isRecording: false
       })
-      await helper.saveUserData(usersData)
+      await helper.saveJSObjData(usersData)
     } else if (!user && addNewUser && userFilter) {
-      helper.announcer(userData.unableToUpdate(), 'warn')
+      helper.announcer(userData.unableToUpdate, 'warn')
     }
   },
-  async saveUserData(data) {
-    await fs.writeFileSync(
-      './model/usersData.json',
-      JSON.stringify(data),
-      'utf8',
-      () => {
-        helper.announcer(userData.updated)
-      })
+  async saveJSObjData(data, fileName = 'usersData') {
+    return new Promise(async (resolve) => {
+      fs.writeFile(
+        `./model/${fileName}.json`,
+        JSON.stringify(data),
+        'utf8',
+        (error) => {
+          console.log(error);
+        })
+      if (fileName === 'usersData') {
+        helper.announcer(userData.updated(fileName))
+      } else {
+        helper.announcer(streamRecord.updated(fileName))
+      }
+      resolve()
+    })
   },
   async startRecord(streamer, fetchPixivEngId, dirname) {
 
@@ -141,28 +150,27 @@ const helper = {
     }
   },
   async recordStream(userName, dirName) {
-    fs.access(`${dirName}/recorder/@${userName}.bat`, fs.constants.F_OK, (err) => {
+    fs.access(`${dirName}/recorder/${prefix}${userName}.bat`, fs.constants.F_OK, (err) => {
 
       helper.announcer(batchFile.isExist(userName, err))
       if (err) {
         helper.announcer(batchFile.created(userName))
-        fs.writeFile(`./recorder/@${userName}.bat`, helper.recorderMaker(userName), (error) => {
+        fs.writeFile(`./recorder/${prefix}${userName}.bat`, helper.recorderMaker(userName), (error) => {
           console.log(error);
         })
       }
 
-      helper.execFile(`@${userName}`, dirName)
+      helper.execFile(`${prefix}${userName}`, dirName)
     })
   },
   async recordColStream(userName, hostUrl, dirName) {
-    const fileName = `${new Date().getTime()}@${userName}`
+    const fileName = `${new Date().getTime()}${prefix}${userName}`
     fs.writeFile(`./recorder/${fileName}.bat`, helper.recorderMaker(userName, true, hostUrl), (error) => {
       console.log(error);
     })
     await setTimeout(function () { helper.execFile(`${fileName}`, dirName) }, 60000)
   },
-  recorderMaker(userName, isCol = false, hostUrl) {
-    const { reTryInterval, maxTryTimes, prefix } = recordSetting
+  recorderMaker(userName, isCol = false, hostUrl) {    
     if (isCol) {
       return `
     @echo off\n

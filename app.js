@@ -3,7 +3,7 @@ const { login, notifications } = require('./config/domSelector')
 const { loginOption } = login
 const { nextPageSelector, StreamingUser } = notifications
 const { app } = require('./config/announce')
-const { startToLogin, startToFetchStream, userStatus} = app
+const { startToLogin, startToFetchStream, userStatus, recordStatus } = app
 const helper = require('./util/helper')
 const puppeteer = require('puppeteer-core');
 
@@ -14,7 +14,6 @@ const puppeteer = require('puppeteer-core');
     await page.goto(url.pixiv, { waitUntil: 'domcontentloaded' });
 
     // 檢查是否有登入
-    
     const [loginBtn] = await Promise.all([page.$(loginOption)])
     if (loginBtn) {
       helper.announcer(startToLogin)
@@ -23,7 +22,7 @@ const puppeteer = require('puppeteer-core');
 
     // 開始檢查實況
     await helper.wait(2000)
-    helper.announcer(startToFetchStream)    
+    helper.announcer(startToFetchStream)
     await page.waitForSelector(nextPageSelector)
     const nextPageBtn = await page.$(nextPageSelector).catch(e => console.error(e))
     if (nextPageBtn) nextPageBtn.click()
@@ -38,8 +37,8 @@ const puppeteer = require('puppeteer-core');
       ])
 
       // 比較isRecoding清單，如果實況者不在清單內就開始錄影
-      for (streamer of streamersInfo){        
-        if (helper.notCataloged(isRecording, streamer)){
+      for (streamer of streamersInfo) {
+        if (helper.notCataloged(isRecording, streamer)) {
           // 點選Id，存取dataset-user-id相對應的userId
           const [fetchData, usersData] = await Promise.all([
             helper.fetchStreamingUser(page, streamer),
@@ -54,7 +53,7 @@ const puppeteer = require('puppeteer-core');
           if (userFilter) {
             if (user) {
               await helper.startRecord(streamer, fetchPixivEngId, __dirname)
-            } else {              
+            } else {
               helper.announcer(userStatus.isNotTarget(fetchData[0]))
             }
           } else {
@@ -65,9 +64,17 @@ const puppeteer = require('puppeteer-core');
           helper.announcer(userStatus.isStillStreaming(streamer.userName))
         }
       }
+      // 更新isRecording
+      isRecording = streamersInfo
+      helper.announcer(recordStatus.isUpDated)
+      helper.saveJSObjData(isRecording, 'isStreaming')
+    } else {
+      isRecording = []
+      helper.announcer(recordStatus.isUnChanged)
+      helper.saveJSObjData(isRecording, 'isStreaming')
     }
 
-    console.log('DONE!')
+    await helper.wait(1000)
   } catch (error) {
     console.log(error.name + ': ' + error.message)
   } finally {
