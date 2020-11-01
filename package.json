@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node app.js",
+    "dev": "node pixiv.js",
     "fetch": "node getPixivFollowings.js",
     "init": "node init.js"
   },

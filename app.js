@@ -1,14 +1,12 @@
-const { puppeteerSetting, url, userFilter, addNewUser } = require('./config/config.js')
+const { url, userFilter, addNewUser } = require('./config/config.js')
 const { login, notifications } = require('./config/domSelector')
 const { loginOption } = login
 const { nextPageSelector, StreamingUser } = notifications
 const { app } = require('./config/announce')
 const { startToLogin, startToFetchStream, userStatus, recordStatus } = app
 const helper = require('./util/helper')
-const puppeteer = require('puppeteer-core');
 
-(async () => {
-  const browser = await puppeteer.launch(puppeteerSetting);
+module.exports = async (browser) => {
   const page = await browser.newPage();
   try {
     await page.goto(url.pixiv, { waitUntil: 'domcontentloaded' });
@@ -79,6 +77,5 @@ const puppeteer = require('puppeteer-core');
     console.log(error.name + ': ' + error.message)
   } finally {
     await page.close();
-    await browser.close()
   }
-})()
+}

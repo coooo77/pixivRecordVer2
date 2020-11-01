@@ -25,7 +25,7 @@ module.exports = {
       isStillStreaming: msg => `User ${msg} is streaming.`
     },
     recordStatus: {
-      isUpDated: 'Update isRecording',
+      isUpDated: 'Start to update streamRecord',
       isUnChanged: 'No User is streaming'
     }
   },
@@ -53,4 +53,7 @@ module.exports = {
     },
     initiationIsFinished: 'Initiation finished'
   },
+  pixiv: {
+    startToMonitor: 'Start to monitor Pixiv web site ...'
+  }
 }
