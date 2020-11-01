@@ -31,7 +31,7 @@ const puppeteer = require('puppeteer-core');
     const numOfStreamingUser = await helper.fetchNumOfStreamingUser(page, StreamingUser)
     if (numOfStreamingUser !== 0) {
       // 讀取所有實況者ID與實況網址、有誰正在實況的紀錄檔案
-      const [streamersInfo, isRecording] = await Promise.all([
+      let [streamersInfo, isRecording] = await Promise.all([
         helper.getStreamInfo(page, StreamingUser),
         helper.getJSObjData('isStreaming')
       ])
@@ -64,14 +64,16 @@ const puppeteer = require('puppeteer-core');
           helper.announcer(userStatus.isStillStreaming(streamer.userName))
         }
       }
-      // 更新isRecording
+      // 更新isRecording      
+      console.log(`[001]`)
       isRecording = streamersInfo
       helper.announcer(recordStatus.isUpDated)
-      helper.saveJSObjData(isRecording, 'isStreaming')
+      await helper.saveJSObjData(isRecording, 'isStreaming')
     } else {
+      console.log(`[002]`)
       isRecording = []
       helper.announcer(recordStatus.isUnChanged)
-      helper.saveJSObjData(isRecording, 'isStreaming')
+      await helper.saveJSObjData(isRecording, 'isStreaming')
     }
 
     await helper.wait(1000)

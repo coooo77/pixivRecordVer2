@@ -1,5 +1,6 @@
-const { login, fetchTarget } = require('../config/domSelector')
+const { login, fetchTarget, fetchUserFollowing } = require('../config/domSelector')
 const { loginBtnSelector, loginAccountInput, loginPasswordInput, loginOption } = login
+const { avatar, profile, followings } = fetchUserFollowing
 const { app } = require('../config/announce')
 const { batchFile, userData, streamType, streamRecord } = app
 const { recordSetting } = require('../config/config')
@@ -134,13 +135,12 @@ const helper = {
       if (fileName === 'usersData') {
         helper.announcer(userData.updated(fileName))
       } else {
-        helper.announcer(streamRecord.updated(fileName))
+        helper.announcer(streamRecord.isUpDated(fileName))
       }
       resolve()
     })
   },
   async startRecord(streamer, fetchPixivEngId, dirname) {
-
     if (streamer.host !== fetchPixivEngId) {
       helper.announcer(streamType.isColStream(streamer.userName))
       await helper.recordColStream(fetchPixivEngId, streamer.href, dirname)
@@ -151,7 +151,6 @@ const helper = {
   },
   async recordStream(userName, dirName) {
     fs.access(`${dirName}/recorder/${prefix}${userName}.bat`, fs.constants.F_OK, (err) => {
-
       helper.announcer(batchFile.isExist(userName, err))
       if (err) {
         helper.announcer(batchFile.created(userName))
@@ -159,7 +158,6 @@ const helper = {
           console.log(error);
         })
       }
-
       helper.execFile(`${prefix}${userName}`, dirName)
     })
   },
@@ -170,7 +168,7 @@ const helper = {
     })
     await setTimeout(function () { helper.execFile(`${fileName}`, dirName) }, 60000)
   },
-  recorderMaker(userName, isCol = false, hostUrl) {    
+  recorderMaker(userName, isCol = false, hostUrl) {
     if (isCol) {
       return `
     @echo off\n
@@ -216,6 +214,58 @@ const helper = {
       helper.announcer(batchFile.processKilled(fileName))
       commands.kill()
     })
+  },
+  async goToFollowingPage(page) {
+    await page.waitForSelector(avatar, { visible: true })
+    await page.click(avatar)
+    await page.waitForSelector(profile, { visible: true })
+    await page.click(profile)
+    await page.waitForSelector(followings, { visible: true })
+    await Promise.all([
+      page.click(followings),
+      page.waitForNavigation()
+    ])
+  },
+  async getNumOfFollowings(page) {
+    const numOfFollowings = Number(await page.$eval(followings, node => node.innerText))
+    return numOfFollowings
+  },
+  async fetchUsersData(page, numOfFollowings) {
+    const dataForDB = []
+    const { pixivEngId, name, userId } = fetchTarget
+    for (let i = 0; i < numOfFollowings; i++) {
+      const profile = `div[data-wall-index="${i}"]  a.username`
+      await helper.wait(300)
+      await page.waitForSelector(profile, { visible: true })
+      await page.click(profile)
+      await page.waitForSelector(pixivEngId, { visible: true })
+
+      const fetchName = page.$eval(name, node => node.innerText)
+      const fetchUserId = page.$eval(userId, node => node.href.substring(23))
+      const fetchPixivEngId = page.$eval(pixivEngId, node => {
+        const str = node.pathname.substring(2)
+        const cut = str.indexOf('/')
+        return str.substr(0, cut)
+      })
+
+      const result = await Promise.all([
+        fetchName,
+        fetchUserId,
+        fetchPixivEngId
+      ])
+
+      dataForDB.push({
+        id: i,
+        name: result[0],
+        userId: result[1],
+        pixivEngId: result[2],
+        isRecording: false
+      })
+      await page.click(profile)
+      await page.waitForSelector(pixivEngId, { hidden: true })
+    }
+
+    return dataForDB
   },
 }
 

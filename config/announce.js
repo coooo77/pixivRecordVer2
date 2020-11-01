@@ -4,7 +4,7 @@ module.exports = {
     startToFetchStream: 'Start to fetch stream ...',
     userData: {
       changed: msg => `User ${msg} Data changed, start to Update.`,
-      newUserFound: msg => `No User can be found, start update user ${msg}.`,
+      newUserFound: msg => `New User be found, start update user ${msg}.`,
       unableToUpdate: 'AddNewUser function can not work with userFilter function.\nTurn off userFilter function if you need to add user to DataBase.',
       updated: msg => `Users data ${msg}.json  updated`
     },
@@ -28,6 +28,10 @@ module.exports = {
       isUpDated: 'Update isRecording',
       isUnChanged: 'No User is streaming'
     }
+  },
+  getPixivFollowings: {
+    startToFetch: 'Start To fetch users data, it may takes few minutes ...',
+    fetchFinished: 'Fetch progress end',
+    numOfFetchedUser: msg => `${msg} users recorded in usersData.json, stored in dir model.`
   }
-
 }
