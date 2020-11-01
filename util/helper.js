@@ -19,6 +19,8 @@ const helper = {
       console.log(`[SYSTEM] ${message}`)
     } else if (type === 'warn') {
       console.log(`\n[WARNING] ${message}`)
+    } else if (type === 'time') {
+      console.log(`\n[ LOG ] ${message}`)
     }
   },
   async login(page) {
@@ -277,9 +279,6 @@ const helper = {
     }
 
     return dataForDB
-  },
-  timeAnnounce(count) {
-    console.log(`\n第${count++}次執行檢查，輸入ctrl+c結束錄影 ${new Date().toLocaleString()}`)
   }
 }
 

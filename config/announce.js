@@ -54,6 +54,7 @@ module.exports = {
     initiationIsFinished: 'Initiation finished'
   },
   pixiv: {
-    startToMonitor: 'Start to monitor Pixiv web site ...'
+    startToMonitor: 'Start to monitor Pixiv web site ...',
+    timeAnnounce: msg => `第${msg}次執行檢查，輸入ctrl+c結束錄影 ${new Date().toLocaleString()}`
   }
 }
