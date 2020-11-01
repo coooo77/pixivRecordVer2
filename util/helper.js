@@ -119,6 +119,11 @@ const helper = {
         pixivEngId: fetchPixivEngId,
         isRecording: false
       })
+      // 更新Id (目前沒有更新id的需求，不過使用過濾功能，把使用者清單隨意刪除id就會亂掉)
+      // usersData = usersData.map((user, index) => ({
+      //   ...user,
+      //   id: index
+      // }))
       await helper.saveJSObjData(usersData)
     } else if (!user && addNewUser && userFilter) {
       helper.announcer(userData.unableToUpdate, 'warn')
