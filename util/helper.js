@@ -7,6 +7,7 @@ const { recordSetting } = require('../config/config')
 const { reTryInterval, maxTryTimes, prefix } = recordSetting
 const fs = require('fs')
 const cp = require('child_process')
+const { rejects } = require('assert')
 require('dotenv').config()
 
 const helper = {
@@ -15,9 +16,9 @@ const helper = {
   },
   announcer(message, type = 'system') {
     if (type === 'system') {
-      console.log(`[SYSTEM]${message}`)
+      console.log(`[SYSTEM] ${message}`)
     } else if (type === 'warn') {
-      console.log(`[WARNING]${message}`)
+      console.log(`[WARNING] ${message}`)
     }
   },
   async login(page) {
@@ -123,21 +124,26 @@ const helper = {
       helper.announcer(userData.unableToUpdate, 'warn')
     }
   },
-  async saveJSObjData(data, fileName = 'usersData') {
-    return new Promise(async (resolve) => {
-      fs.writeFile(
-        `./model/${fileName}.json`,
-        JSON.stringify(data),
-        'utf8',
-        (error) => {
-          console.log(error);
-        })
-      if (fileName === 'usersData') {
-        helper.announcer(userData.updated(fileName))
-      } else {
-        helper.announcer(streamRecord.isUpDated(fileName))
+  saveJSObjData(data, fileName = 'usersData') {
+    return new Promise((resolve, reject) => {
+      try {
+        fs.writeFileSync(
+          `./model/${fileName}.json`,
+          JSON.stringify(data),
+          'utf8',
+          (error) => {
+            console.log(error);
+          })
+        if (fileName === 'usersData') {
+          helper.announcer(userData.updated(fileName))
+        } else {
+          helper.announcer(streamRecord.isUpDated(fileName))
+        }
+        resolve()
+      } catch (error) {
+        console.error(error)
+        reject(error)
       }
-      resolve()
     })
   },
   async startRecord(streamer, fetchPixivEngId, dirname) {
@@ -154,7 +160,7 @@ const helper = {
       helper.announcer(batchFile.isExist(userName, err))
       if (err) {
         helper.announcer(batchFile.created(userName))
-        fs.writeFile(`./recorder/${prefix}${userName}.bat`, helper.recorderMaker(userName), (error) => {
+        fs.writeFileSync(`./recorder/${prefix}${userName}.bat`, helper.recorderMaker(userName), (error) => {
           console.log(error);
         })
       }
@@ -163,7 +169,7 @@ const helper = {
   },
   async recordColStream(userName, hostUrl, dirName) {
     const fileName = `${new Date().getTime()}${prefix}${userName}`
-    fs.writeFile(`./recorder/${fileName}.bat`, helper.recorderMaker(userName, true, hostUrl), (error) => {
+    fs.writeFileSync(`./recorder/${fileName}.bat`, helper.recorderMaker(userName, true, hostUrl), (error) => {
       console.log(error);
     })
     await setTimeout(function () { helper.execFile(`${fileName}`, dirName) }, 60000)

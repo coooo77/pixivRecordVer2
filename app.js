@@ -57,20 +57,18 @@ const puppeteer = require('puppeteer-core');
               helper.announcer(userStatus.isNotTarget(fetchData[0]))
             }
           } else {
-            // 沒有要過濾使用者，直接檢查Notification上的使用者
+            // 沒有要過濾使用者，直接檢查Notification上的使用者 
             await helper.startRecord(streamer, fetchPixivEngId, __dirname)
           }
         } else {
           helper.announcer(userStatus.isStillStreaming(streamer.userName))
         }
       }
-      // 更新isRecording      
-      console.log(`[001]`)
+      // 更新isRecording
       isRecording = streamersInfo
       helper.announcer(recordStatus.isUpDated)
       await helper.saveJSObjData(isRecording, 'isStreaming')
     } else {
-      console.log(`[002]`)
       isRecording = []
       helper.announcer(recordStatus.isUnChanged)
       await helper.saveJSObjData(isRecording, 'isStreaming')
