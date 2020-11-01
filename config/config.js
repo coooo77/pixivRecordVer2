@@ -18,3 +18,6 @@ module.exports = {
   userFilter: false,
   addNewUser: true
 }
+
+// AddNewUser function can not work with userFilter function.
+// Turn off userFilter function if you need to add user to DataBase.

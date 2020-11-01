@@ -5,11 +5,11 @@ module.exports = {
     userData: {
       changed: msg => `User ${msg} Data changed, start to Update.`,
       newUserFound: msg => `New User be found, start update user ${msg}.`,
-      unableToUpdate: 'AddNewUser function can not work with userFilter function.\nTurn off userFilter function if you need to add user to DataBase.',
-      updated: msg => `Users data ${msg}.json  updated`
+      unableToUpdate: 'AddNewUser function can not work with userFilter function.\nTurn off userFilter function if you need to add user to DataBase.\n',
+      updated: msg => `Users data ${msg}.json updated`
     },
     streamRecord: {
-      isUpDated: msg => `StreamRecord ${msg}.json  updated`
+      isUpDated: msg => `StreamRecord ${msg}.json updated`
     },
     streamType: {
       isColStream: msg => `${msg} join collaboration streaming, wait 60s and record.`,

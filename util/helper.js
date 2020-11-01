@@ -18,7 +18,7 @@ const helper = {
     if (type === 'system') {
       console.log(`[SYSTEM] ${message}`)
     } else if (type === 'warn') {
-      console.log(`[WARNING] ${message}`)
+      console.log(`\n[WARNING] ${message}`)
     }
   },
   async login(page) {
