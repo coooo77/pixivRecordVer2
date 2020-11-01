@@ -1,6 +1,9 @@
 const { puppeteerSetting, url, userFilter, addNewUser } = require('./config/config.js')
 const { login, notifications } = require('./config/domSelector')
+const { loginOption } = login
+const { nextPageSelector, StreamingUser } = notifications
 const { app } = require('./config/announce')
+const { startToLogin, startToFetchStream, userStatus} = app
 const helper = require('./util/helper')
 const puppeteer = require('puppeteer-core');
 
@@ -11,17 +14,16 @@ const puppeteer = require('puppeteer-core');
     await page.goto(url.pixiv, { waitUntil: 'domcontentloaded' });
 
     // 檢查是否有登入
-    const { loginOption } = login
+    
     const [loginBtn] = await Promise.all([page.$(loginOption)])
     if (loginBtn) {
-      helper.announcer(app.startToLogin)
+      helper.announcer(startToLogin)
       await helper.login(page)
     }
 
     // 開始檢查實況
     await helper.wait(2000)
-    helper.announcer(app.startToFetchStream)
-    const { nextPageSelector, StreamingUser } = notifications
+    helper.announcer(startToFetchStream)    
     await page.waitForSelector(nextPageSelector)
     const nextPageBtn = await page.$(nextPageSelector).catch(e => console.error(e))
     if (nextPageBtn) nextPageBtn.click()
@@ -47,7 +49,20 @@ const puppeteer = require('puppeteer-core');
           const [user] = usersData.filter(user => user.userId === fetchUserId)
           await helper.upDateUser(usersData, user, fetchData, addNewUser, userFilter)
 
-          //TODO:開始錄製
+          // 開始錄製
+          // 檢查是否有設定過濾使用者
+          if (userFilter) {
+            if (user) {
+              await helper.startRecord(streamer, fetchPixivEngId, __dirname)
+            } else {              
+              helper.announcer(userStatus.isNotTarget(fetchData[0]))
+            }
+          } else {
+            // 沒有要過濾使用者，直接檢查Notification上的使用者
+            await helper.startRecord(streamer, fetchPixivEngId, __dirname)
+          }
+        } else {
+          helper.announcer(userStatus.isStillStreaming(streamer.userName))
         }
       }
     }

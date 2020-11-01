@@ -12,7 +12,7 @@ module.exports = {
   checkStreamInterval: 1000 * 60,
   recordSetting: {
     reTryInterval: 30,
-    maxTryTimes: 60,
+    maxTryTimes: 120,
     prefix: '@'
   },
   userFilter: false,
