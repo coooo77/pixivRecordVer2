@@ -1,9 +1,10 @@
-const { url, userFilter, addNewUser } = require('./config/config.js')
+const { url, userFilter, addNewUser, stopRecordDuringReTryInterval, recordSetting } = require('./config/config.js')
+const { reTryInterval, maxTryTimes } = recordSetting
 const { login, notifications } = require('./config/domSelector')
 const { loginOption } = login
 const { nextPageSelector, StreamingUser } = notifications
 const { app } = require('./config/announce')
-const { startToLogin, startToFetchStream, userStatus, recordStatus } = app
+const { startToLogin, startToFetchStream, userStatus, recordStatus, streamType } = app
 const helper = require('./util/helper')
 
 module.exports = async (browser) => {
@@ -21,7 +22,9 @@ module.exports = async (browser) => {
     // 開始檢查實況
     await helper.wait(2000)
     helper.announcer(startToFetchStream)
+    await page.screenshot({ path: 'before.png' });
     await page.waitForSelector(nextPageSelector)
+    await page.screenshot({ path: 'after.png' });
     const nextPageBtn = await page.$(nextPageSelector).catch(e => console.error(e))
     if (nextPageBtn) nextPageBtn.click()
 
@@ -48,22 +51,26 @@ module.exports = async (browser) => {
 
           // 開始錄製
           // 檢查是否有設定過濾使用者
-          if (userFilter) {
-            if (user) {
-              await helper.startRecord(streamer, fetchPixivEngId, __dirname)
-            } else {
-              helper.announcer(userStatus.isNotTarget(fetchData[0]))
-            }
+          if (userFilter && !user) {
+            helper.announcer(userStatus.isNotTarget(fetchData[0]))
           } else {
             // 沒有要過濾使用者，直接檢查Notification上的使用者 
-            await helper.startRecord(streamer, fetchPixivEngId, __dirname)
+            // 檢查是否還在reTry範圍
+            const recordingUser = isRecording.find(user => user.datasetUserId === streamer.datasetUserId)
+            const isInRetryInterval = recordingUser ? (Date.now() - recordingUser.createdTime) < (reTryInterval * 1000 * maxTryTimes) : false
+            if (stopRecordDuringReTryInterval && recordingUser && isInRetryInterval) {
+              helper.announcer(streamType.stop(streamer.userName))
+            } else if (!recordingUser) {
+              await helper.startRecord(streamer, fetchPixivEngId, __dirname)
+            }
           }
         } else {
           helper.announcer(userStatus.isStillStreaming(streamer.userName))
         }
       }
       // 更新isRecording
-      isRecording = streamersInfo
+      // isRecording = streamersInfo
+      helper.upDateIsRecording(isRecording, streamersInfo)
       helper.announcer(recordStatus.isUpDated)
       await helper.saveJSObjData(isRecording, 'isStreaming')
     } else {

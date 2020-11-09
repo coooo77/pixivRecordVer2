@@ -13,7 +13,8 @@ module.exports = {
     },
     streamType: {
       isColStream: msg => `${msg} join collaboration streaming, wait 60s and record.`,
-      isOwnerStream: msg => `${msg} is streaming, start to record`
+      isOwnerStream: msg => `${msg} is streaming, start to record`,
+      stop: msg => `Stop to record user ${msg}, stream is still in retry interval`
     },
     batchFile: {
       isExist: (msg, err) => `file ${msg}.bat ${err ? 'does not exist' : 'exists'}`,
@@ -22,11 +23,13 @@ module.exports = {
     },
     userStatus: {
       isNotTarget: msg => `${msg} isn't target, abort recording process.`,
-      isStillStreaming: msg => `User ${msg} is streaming.`
+      isStillStreaming: msg => `User ${msg} is streaming.`,
+      isOffline: msg => `User ${msg} is offline, start to delete record in isStreaming.json`
     },
     recordStatus: {
       isUpDated: 'Start to update streamRecord',
-      isUnChanged: 'No User is streaming'
+      isUnChanged: 'No User is streaming',
+      isKept: (user, timeNow, dueTime) => `User ${user} Record is still in retry interval, wait to delete (${timeNow.toFixed(0)} /${dueTime} mins)`
     }
   },
   getPixivFollowings: {

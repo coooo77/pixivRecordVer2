@@ -57,7 +57,9 @@ const helper = {
         datasetUserId,
         userName,
         host,
-        href
+        href,
+        createdTime: Date.now(),
+        createdLocalTime: new Date().toLocaleString(),
       })
     }))
     return streamersInfo
@@ -111,7 +113,7 @@ const helper = {
         name: user.userId === fetchUserId ? fetchName : user.name,
         pixivEngId: user.userId === fetchUserId ? fetchPixivEngId : user.name
       }))
-      await helper.saveJSObjData(usersData)
+      // await helper.saveJSObjData(usersData)
     } else if (!user && addNewUser && !userFilter) {
       helper.announcer(userData.newUserFound(fetchName))
       usersData.push({
@@ -279,6 +281,32 @@ const helper = {
     }
 
     return dataForDB
+  },
+  upDateIsRecording(isRecording, streamersInfo) {
+    const isRecordingUserIdList = isRecording.map(record => record.datasetUserId)
+    const streamersInfoUserIdList = streamersInfo.map(record => record.datasetUserId)
+    for (let i = 0; i < streamersInfoUserIdList.length; i++) {
+      if (!isRecordingUserIdList.includes(streamersInfoUserIdList[i])) {
+        const user = streamersInfo.find(user => user.datasetUserId === streamersInfoUserIdList[i])
+        isRecording.push(user)
+      }
+    }
+    for (let i = 0; i < isRecordingUserIdList.length; i++) {
+      if (!streamersInfoUserIdList.includes(isRecordingUserIdList[i])) {
+        const userIndex = isRecording.findIndex(user => user.datasetUserId == isRecordingUserIdList[i])
+        const recordTime = isRecording[userIndex].createdTime
+        const timePassed = Date.now() - recordTime
+        const limit = reTryInterval * 1000 * maxTryTimes
+        const isInRetryInterval = (timePassed) < (limit)
+        const userName = isRecording[userIndex].userName
+        if (!isInRetryInterval) {
+          helper.announcer(app.userStatus.isOffline(userName))
+          isRecording.splice(userIndex, 1)
+        } else {
+          helper.announcer(app.recordStatus.isKept(userName, timePassed / 60000, limit / 60000))
+        }
+      }
+    }
   }
 }
 
