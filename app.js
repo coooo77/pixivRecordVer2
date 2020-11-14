@@ -1,4 +1,4 @@
-const { url, userFilter, addNewUser, stopRecordDuringReTryInterval, recordSetting } = require('./config/config.js')
+const { url, userFilter, addNewUser, stopRecordDuringReTryInterval, recordSetting, blockList } = require('./config/config.js')
 const { reTryInterval, maxTryTimes } = recordSetting
 const { login, notifications } = require('./config/domSelector')
 const { loginOption } = login
@@ -26,9 +26,9 @@ module.exports = async (browser) => {
     // 如果沒實況，直接結束
     const loadEndMarkerIcon = await page.$(loadEndMarker).catch(e => console.error(e))
     if (!loadEndMarkerIcon) {
-      await page.screenshot({ path: 'before.png' });
+      // await page.screenshot({ path: 'before.png' });
       await page.waitForSelector(nextPageSelector)
-      await page.screenshot({ path: 'after.png' });
+      // await page.screenshot({ path: 'after.png' });
       const nextPageBtn = await page.$(nextPageSelector).catch(e => console.error(e))
       if (nextPageBtn) nextPageBtn.click()
 
@@ -52,10 +52,9 @@ module.exports = async (browser) => {
             const [fetchName, fetchUserId, fetchPixivEngId] = fetchData
             const [user] = usersData.filter(user => user.userId === fetchUserId)
             await helper.upDateUser(usersData, user, fetchData, addNewUser, userFilter)
-
             // 開始錄製
             // 檢查是否有設定過濾使用者
-            if (userFilter && !user) {
+            if ((userFilter && !user) || blockList.includes(fetchUserId)) {
               helper.announcer(userStatus.isNotTarget(fetchData[0]))
             } else {
               // 沒有要過濾使用者，直接檢查Notification上的使用者 
@@ -69,7 +68,8 @@ module.exports = async (browser) => {
               }
             }
           } else {
-            helper.announcer(userStatus.isStillStreaming(streamer.userName))
+            const isBlockTarget = blockList.includes(streamer.datasetUserId)
+            helper.announcer(userStatus.isStillStreaming(streamer.userName, isBlockTarget))
           }
         }
         // 更新isRecording

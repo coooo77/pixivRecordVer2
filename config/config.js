@@ -16,6 +16,7 @@ module.exports = {
     prefix: '@'
   },
   userFilter: false,
+  blockList: ['datasetUserId'],
   addNewUser: true,
   stopRecordDuringReTryInterval: true,
 }

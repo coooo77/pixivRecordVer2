@@ -23,7 +23,7 @@ module.exports = {
     },
     userStatus: {
       isNotTarget: msg => `${msg} isn't target, abort recording process.`,
-      isStillStreaming: msg => `User ${msg} is streaming.`,
+      isStillStreaming: (msg, isBlockTarget) => `User ${msg} is streaming${isBlockTarget ? ', but isn\'t record target ' : '.'}`,
       isOffline: msg => `User ${msg} is offline, start to delete record in isStreaming.json`,
       noUserToRecord: 'no Target user can be record'
     },
