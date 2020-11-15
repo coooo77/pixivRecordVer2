@@ -54,7 +54,7 @@ module.exports = async (browser) => {
             await helper.upDateUser(usersData, user, fetchData, addNewUser, userFilter)
             // 開始錄製
             // 檢查是否有設定過濾使用者
-            if ((userFilter && !user) || blockList.includes(fetchUserId)) {
+            if ((userFilter && !user) || blockList.includes(fetchName)) {
               helper.announcer(userStatus.isNotTarget(fetchData[0]))
             } else {
               // 沒有要過濾使用者，直接檢查Notification上的使用者 
@@ -68,7 +68,7 @@ module.exports = async (browser) => {
               }
             }
           } else {
-            const isBlockTarget = blockList.includes(streamer.datasetUserId)
+            const isBlockTarget = blockList.includes(streamer.userName)
             helper.announcer(userStatus.isStillStreaming(streamer.userName, isBlockTarget))
           }
         }
