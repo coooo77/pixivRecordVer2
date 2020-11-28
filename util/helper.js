@@ -283,14 +283,18 @@ const helper = {
     return dataForDB
   },
   upDateIsRecording(isRecording, streamersInfo) {
+    let updateCount = 0
+
     const isRecordingUserIdList = isRecording.map(record => record.datasetUserId)
     const streamersInfoUserIdList = streamersInfo.map(record => record.datasetUserId)
     for (let i = 0; i < streamersInfoUserIdList.length; i++) {
       if (!isRecordingUserIdList.includes(streamersInfoUserIdList[i])) {
         const user = streamersInfo.find(user => user.datasetUserId === streamersInfoUserIdList[i])
         isRecording.push(user)
+        updateCount++
       }
     }
+
     for (let i = 0; i < isRecordingUserIdList.length; i++) {
       if (!streamersInfoUserIdList.includes(isRecordingUserIdList[i])) {
         const userIndex = isRecording.findIndex(user => user.datasetUserId == isRecordingUserIdList[i])
@@ -302,11 +306,14 @@ const helper = {
         if (!isInRetryInterval) {
           helper.announcer(app.userStatus.isOffline(userName))
           isRecording.splice(userIndex, 1)
+          updateCount++
         } else {
           helper.announcer(app.recordStatus.isKept(userName, timePassed / 60000, limit / 60000))
         }
       }
     }
+
+    return updateCount
   }
 }
 

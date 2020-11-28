@@ -73,14 +73,17 @@ module.exports = async (browser) => {
           }
         }
         // 更新isRecording
-        // isRecording = streamersInfo
-        helper.upDateIsRecording(isRecording, streamersInfo)
-        helper.announcer(recordStatus.isUpDated)
-        await helper.saveJSObjData(isRecording, 'isStreaming')
+        const isUpdated = helper.upDateIsRecording(isRecording, streamersInfo)
+        if (isUpdated) {
+          helper.announcer(recordStatus.isUpDated)
+          await helper.saveJSObjData(isRecording, 'isStreaming')
+        }
       } else {
-        isRecording = []
         helper.announcer(recordStatus.isUnChanged)
-        await helper.saveJSObjData(isRecording, 'isStreaming')
+        if (isRecording.length !== 0) {
+          isRecording = []
+          await helper.saveJSObjData(isRecording, 'isStreaming')
+        }
       }
     } else {
       helper.announcer(userStatus.noUserToRecord)
