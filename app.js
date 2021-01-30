@@ -12,24 +12,17 @@ module.exports = async (browser) => {
   try {
     await page.goto(url.pixiv, { waitUntil: 'domcontentloaded' });
 
-    // 檢查是否有登入
-    const [loginBtn] = await Promise.all([page.$(loginOption)])
-    if (loginBtn) {
-      helper.announcer(startToLogin)
-      await helper.login(page)
-    }
-
     // 開始檢查實況
     await helper.wait(2000)
     helper.announcer(startToFetchStream)
 
     // 如果沒實況，直接結束
-    const loadEndMarkerIcon = await page.$(loadEndMarker).catch(e => console.error(e))
+    const loadEndMarkerIcon = await page.$(loadEndMarker)
     if (!loadEndMarkerIcon) {
       // await page.screenshot({ path: 'before.png' });
       await page.waitForSelector(nextPageSelector)
       // await page.screenshot({ path: 'after.png' });
-      const nextPageBtn = await page.$(nextPageSelector).catch(e => console.error(e))
+      const nextPageBtn = await page.$(nextPageSelector)
       if (nextPageBtn) nextPageBtn.click()
 
       // 存取正在實況者數量    
@@ -90,7 +83,15 @@ module.exports = async (browser) => {
     }
     await helper.wait(1000)
   } catch (error) {
+    // 錯誤發生，處理錯誤
     console.log(error.name + ': ' + error.message)
+
+    // 檢查是否有登入
+    const [loginBtn] = await Promise.all([page.$(loginOption)])
+    if (loginBtn) {
+      helper.announcer(startToLogin)
+      await helper.login(page)
+    }
   } finally {
     await page.close();
   }

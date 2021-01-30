@@ -1,17 +1,17 @@
-{
-  "name": "pixiv_recorder",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "node pixiv.js",
-    "fetch": "node getPixivFollowings.js",
-    "init": "node init.js"
-  },
-  "author": "coooo77",
-  "license": "ISC",
-  "dependencies": {
-    "dotenv": "^8.2.0",
-    "puppeteer-core": "^5.4.1"
+  {
+    "name": "pixiv_recorder",
+    "version": "1.0.1",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "dev": "node pixiv.js",
+      "fetch": "node getPixivFollowings.js",
+      "init": "node init.js"
+    },
+    "author": "coooo77",
+    "license": "ISC",
+    "dependencies": {
+      "dotenv": "^8.2.0",
+      "puppeteer-core": "^5.4.1"
+    }
   }
-}
