@@ -12,6 +12,13 @@ module.exports = async (browser) => {
   try {
     await page.goto(url.pixiv, { waitUntil: 'domcontentloaded' });
 
+    // 檢查是否有登入
+    const [loginBtn] = await Promise.all([page.$(loginOption)])
+    if (loginBtn) {
+      helper.announcer(startToLogin)
+      await helper.login(page)
+    }
+
     // 開始檢查實況
     await helper.wait(2000)
     helper.announcer(startToFetchStream)
