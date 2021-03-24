@@ -192,10 +192,13 @@ const helper = {
     set count=0\n
     :loop\n
     set hour=%time:~0,2%\n
+    set TodayYear=%date:~0,4%\n
+    set TodayMonthP0=%date:~5,2%\n
+    set TodayDayP0=%date:~8,2%\n
     if "%hour:~0,1%" == " " set hour=0%hour:~1,1%\n
     set /a count+=1\n
     echo [CountDown] Loop for ${maxTryTimes} times, try %count% times ...\n
-    streamlink --pixiv-sessionid "${process.env.SESSIONID}" --pixiv-devicetoken "${process.env.DEVICETOKEN}" --pixiv-performer %name% %url% best -o D://JD\\${prefix}%name%_live_pixiv_%DATE%_%hour%%time:~3,2%%time:~6,2%.mp4\n
+    streamlink --pixiv-sessionid "${process.env.SESSIONID}" --pixiv-devicetoken "${process.env.DEVICETOKEN}" --pixiv-purge-credentials --pixiv-performer %name% %url% best -o D://JD\\${prefix}%name%_live_pixiv_%TodayYear%%TodayMonthP0%%TodayDayP0%_%hour%%time:~3,2%%time:~6,2%.ts\n
     if "%count%" == "${maxTryTimes}" exit\n
     echo [CountDown] count down for ${reTryInterval} sec...\n
     @ping 127.0.0.1 -n ${reTryInterval} -w 1000 > nul\n
@@ -208,10 +211,13 @@ const helper = {
     set count=0\n
     :loop\n
     set hour=%time:~0,2%\n
+    set TodayYear=%date:~0,4%\n
+    set TodayMonthP0=%date:~5,2%\n
+    set TodayDayP0=%date:~8,2%\n
     if "%hour:~0,1%" == " " set hour=0%hour:~1,1%\n
     set /a count+=1\n
     echo [CountDown] Loop for ${maxTryTimes} times, try %count% times ... \n
-    streamlink --pixiv-sessionid "${process.env.SESSIONID}" --pixiv-devicetoken "${process.env.DEVICETOKEN}" --pixiv-purge-credentials https://sketch.pixiv.net/@%name% best -o D://JD\\${prefix}%name%_live_pixiv_%DATE%_%hour%%time:~3,2%%time:~6,2%.mp4\n
+    streamlink --pixiv-sessionid "${process.env.SESSIONID}" --pixiv-devicetoken "${process.env.DEVICETOKEN}" --pixiv-purge-credentials https://sketch.pixiv.net/@%name% best -o D://JD\\${prefix}%name%_live_pixiv_%TodayYear%%TodayMonthP0%%TodayDayP0%_%hour%%time:~3,2%%time:~6,2%.ts\n
     if "%count%" == "${maxTryTimes}" exit\n
     echo [CountDown] count down for ${reTryInterval} sec...\n
     @ping 127.0.0.1 -n ${reTryInterval} -w 1000 > nul\n
@@ -225,10 +231,10 @@ const helper = {
         console.log(`Name: ${error.name}\nMessage: ${error.message}\nStack: ${error.stack}`)
       }
     })
-    process.on('exit', function () {
-      helper.announcer(batchFile.processKilled(fileName))
-      commands.kill()
-    })
+    // process.on('exit', function () {
+    //   helper.announcer(batchFile.processKilled(fileName))
+    //   commands.kill()
+    // })
   },
   async goToFollowingPage(page) {
     await page.waitForSelector(avatar, { visible: true })
