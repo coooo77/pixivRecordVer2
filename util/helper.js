@@ -74,7 +74,7 @@ const helper = {
   },
   async fetchStreamingUser(page, streamer) {
     const { pixivEngId, name, userId } = fetchTarget
-    const target = `a[data-user-id="${streamer.datasetUserId}"]`
+    const target = `div[data-user-id="${streamer.datasetUserId}"]`
     await helper.wait(300)
     await page.waitForSelector(target, { visible: true })
     await page.click(target)

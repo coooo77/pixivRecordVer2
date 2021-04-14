@@ -25,6 +25,7 @@ module.exports = {
       isNotTarget: msg => `${msg} isn't target, abort recording process.`,
       isStillStreaming: (msg, isBlockTarget) => `User ${msg} is streaming${isBlockTarget ? ', but isn\'t record target ' : '.'}`,
       isOffline: msg => `User ${msg} is offline, start to delete record in isStreaming.json`,
+      fetchError: user => `Error occurred when fetching user ${user}！ \n`,
       noUserToRecord: 'no Target user can be record'
     },
     recordStatus: {

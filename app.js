@@ -32,7 +32,7 @@ module.exports = async (browser) => {
       const nextPageBtn = await page.$(nextPageSelector)
       if (nextPageBtn) nextPageBtn.click()
 
-      // 存取正在實況者數量    
+      // 存取正在實況者數量
       const numOfStreamingUser = await helper.fetchNumOfStreamingUser(page, StreamingUser)
       if (numOfStreamingUser !== 0) {
         // 讀取所有實況者ID與實況網址、有誰正在實況的紀錄檔案
@@ -42,30 +42,35 @@ module.exports = async (browser) => {
         ])
 
         // 比較isRecoding清單，如果實況者不在清單內就開始錄影
-        for (streamer of streamersInfo) {
+        for (const streamer of streamersInfo) {
           if (helper.notCataloged(isRecording, streamer)) {
-            // 點選Id，存取dataset-user-id相對應的userId
-            const [fetchData, usersData] = await Promise.all([
-              helper.fetchStreamingUser(page, streamer),
-              helper.getJSObjData('usersData')
-            ])
-            const [fetchName, fetchUserId, fetchPixivEngId] = fetchData
-            const [user] = usersData.filter(user => user.userId === fetchUserId)
-            await helper.upDateUser(usersData, user, fetchData, addNewUser, userFilter)
-            // 開始錄製
-            // 檢查是否有設定過濾使用者
-            if ((userFilter && !user) || blockList.includes(fetchName)) {
-              helper.announcer(userStatus.isNotTarget(fetchData[0]))
-            } else {
-              // 沒有要過濾使用者，直接檢查Notification上的使用者 
-              // 檢查是否還在reTry範圍
-              const recordingUser = isRecording.find(user => user.datasetUserId === streamer.datasetUserId)
-              const isInRetryInterval = recordingUser ? (Date.now() - recordingUser.createdTime) < (reTryInterval * 1000 * maxTryTimes) : false
-              if (stopRecordDuringReTryInterval && recordingUser && isInRetryInterval) {
-                helper.announcer(streamType.stop(streamer.userName))
-              } else if (!recordingUser) {
-                await helper.startRecord(streamer, fetchPixivEngId, __dirname)
+            try {
+              // 點選Id，存取dataset-user-id相對應的userId
+              const [fetchData, usersData] = await Promise.all([
+                helper.fetchStreamingUser(page, streamer),
+                helper.getJSObjData('usersData')
+              ])
+              const [fetchName, fetchUserId, fetchPixivEngId] = fetchData
+              const [user] = usersData.filter(user => user.userId === fetchUserId)
+              await helper.upDateUser(usersData, user, fetchData, addNewUser, userFilter)
+              // 開始錄製
+              // 檢查是否有設定過濾使用者
+              if ((userFilter && !user) || blockList.includes(fetchName)) {
+                helper.announcer(userStatus.isNotTarget(fetchData[0]))
+              } else {
+                // 沒有要過濾使用者，直接檢查Notification上的使用者 
+                // 檢查是否還在reTry範圍
+                const recordingUser = isRecording.find(user => user.datasetUserId === streamer.datasetUserId)
+                const isInRetryInterval = recordingUser ? (Date.now() - recordingUser.createdTime) < (reTryInterval * 1000 * maxTryTimes) : false
+                if (stopRecordDuringReTryInterval && recordingUser && isInRetryInterval) {
+                  helper.announcer(streamType.stop(streamer.userName))
+                } else if (!recordingUser) {
+                  await helper.startRecord(streamer, fetchPixivEngId, __dirname)
+                }
               }
+            } catch (error) {
+              helper.announcer(userStatus.fetchError(streamer.userName), 'warn')
+              continue
             }
           } else {
             const isBlockTarget = blockList.includes(streamer.userName)
@@ -80,6 +85,7 @@ module.exports = async (browser) => {
         }
       } else {
         helper.announcer(recordStatus.isUnChanged)
+        const isRecording = await helper.getJSObjData('isStreaming')
         if (isRecording.length !== 0) {
           isRecording = []
           await helper.saveJSObjData(isRecording, 'isStreaming')
