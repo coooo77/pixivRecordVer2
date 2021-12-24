@@ -9,6 +9,7 @@ const helper = require('./util/helper')
 
 module.exports = async (browser) => {
   const page = await browser.newPage();
+
   try {
     await page.goto(url.pixiv, { waitUntil: 'domcontentloaded' });
 
@@ -30,7 +31,7 @@ module.exports = async (browser) => {
       await page.waitForSelector(nextPageSelector)
       // await page.screenshot({ path: 'after.png' });
       const nextPageBtn = await page.$(nextPageSelector)
-      if (nextPageBtn) nextPageBtn.click()
+      if (nextPageBtn) await nextPageBtn.click()
 
       // 存取正在實況者數量
       const numOfStreamingUser = await helper.fetchNumOfStreamingUser(page, StreamingUser)
@@ -85,7 +86,7 @@ module.exports = async (browser) => {
         }
       } else {
         helper.announcer(recordStatus.isUnChanged)
-        const isRecording = await helper.getJSObjData('isStreaming')
+        let isRecording = await helper.getJSObjData('isStreaming')
         if (isRecording.length !== 0) {
           isRecording = []
           await helper.saveJSObjData(isRecording, 'isStreaming')
