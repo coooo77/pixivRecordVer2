@@ -11,9 +11,9 @@ module.exports = {
     loadEndMarker: '#AppContent > div.Notifications > div.Wall > div > div.WallLoader > div'
   },
   fetchTarget: {
-    name: '#root > div.Sidebar.visible > div.SidebarMain > div.SidebarMainBody > div.sidebarInside > div > div.UserHeaderBody > div > div.user > div.name',
-    userId: '#root > div.Sidebar.visible > div.SidebarMain > div.SidebarMainBody > div.sidebarInside > div > div.UserHeaderBody > div > div.socials > a:nth-child(1)',
-    pixivEngId: '#root > div.Sidebar.visible > div.SidebarMain > div.SidebarMainBody > div.sidebarInside > div > div.UserHeaderBody > div > div.follow-stats > div > a:nth-child(1)'
+    name: '.UserHeaderBody > div > div.user > div.name',
+    userId: '.socials > a.social',
+    pixivEngId: 'a.follow-stat',
   },
   fetchUserFollowing: {
     avatar: '#HeaderBody > div > div.HeaderButtonsRight > div:nth-child(3) > div > div.DropdownTrigger.HeaderButtonUserIcon > button > div > div.MediaBody.background.circled',
