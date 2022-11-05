@@ -10,6 +10,8 @@ export default {
   cookiePath: path.join('cookie', 'cookie.json'),
 
   clearFolder(folderPath: string) {
+    if (!fs.existsSync(folderPath)) return
+    
     for (const file of fs.readdirSync(folderPath)) {
       fs.unlinkSync(path.join(folderPath, file))
     }
