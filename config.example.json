@@ -1,0 +1,4 @@
+{
+  "executablePath": "C:\\path\\to\\your\\chrome.exe\\application",
+  "headless": false
+}
