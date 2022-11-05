@@ -1,4 +1,14 @@
 {
-  "executablePath": "C:\\path\\to\\your\\chrome.exe\\application",
-  "headless": false
+  "puppeteerSetting": {
+    "executablePath": "C:\\path\\to\\your\\chrome.exe\\application",
+    "headless": false
+  },
+  "checkStreamInterval": 30,
+  "recordSetting": {
+    "maxTryTimes": 120,
+    "reTryInterval": 30,
+    "saveFolder": "C:\\path\\to\\your\\save\\dir",
+    "prefix": "@"
+  },
+  "blockList": []
 }
