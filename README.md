@@ -1,8 +1,11 @@
 # pixivRecord-Ver2
 
+record drawing streams in [Pixiv](https://www.pixiv.net/).
+
 ## 前置作業 (installation and execution)：
 
 - 安裝 [Streamlink](https://streamlink.github.io/) (最低版本 3.0.0)
+- 安裝 [NodeJs](https://nodejs.org/)
 - 設定 config.json
 
 ```json
