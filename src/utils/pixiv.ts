@@ -5,7 +5,6 @@ import plugin from 'puppeteer-extra-plugin-stealth'
 import fileSys from './fileSys'
 
 import { Browser, Page } from 'puppeteer'
-import { PuppeteerSetting } from '@/interfaces/common'
 
 class Pixiv {
   page?: Page
@@ -45,7 +44,7 @@ class Pixiv {
 
   async launchWeb() {
     try {
-      const puppeteerSetting = this.getPuppeteerSetting() as PuppeteerSetting
+      const { puppeteerSetting } = fileSys.getAppSetting()
 
       this.browser = await puppeteer.launch(puppeteerSetting)
 
@@ -93,12 +92,6 @@ class Pixiv {
     StealthPlugin.enabledEvasions.delete('navigator.plugins')
 
     puppeteer.use(StealthPlugin)
-  }
-
-  getPuppeteerSetting() {
-    const pathToSetting = path.join('config.json')
-
-    return fileSys.getJSONFile(pathToSetting)
   }
 }
 

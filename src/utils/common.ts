@@ -4,7 +4,7 @@ import chalk from 'chalk'
 import { LogMsgType } from '@/interfaces/common'
 
 export default {
-  msg(msg: string, msgType: LogMsgType) {
+  msg(msg: string, msgType: LogMsgType = 'info') {
     const { log } = console
 
     const type = ` ${msgType.toUpperCase()} `

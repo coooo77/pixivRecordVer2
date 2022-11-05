@@ -1,15 +1,56 @@
 import fs from 'fs'
 import path from 'path'
-import { Cookie } from '@/interfaces/common'
+
+import { RecordingUsers } from '@/interfaces/main'
+import { AppSetting, Cookie } from '@/interfaces/common'
 
 export default {
+  modalPath: path.join('modal', 'modal.json'),
+
   cookiePath: path.join('cookie', 'cookie.json'),
+
+  clearFolder(folderPath: string) {
+    for (const file of fs.readdirSync(folderPath)) {
+      fs.unlinkSync(path.join(folderPath, file))
+    }
+  },
+
+  getModal(): RecordingUsers {
+    const modal = this.getJSONFile<RecordingUsers>(this.modalPath)
+
+    if (!modal) {
+      this.saveJSONFile(this.modalPath, {})
+    }
+
+    return modal || {}
+  },
 
   getCookie() {
     return this.getJSONFile(this.cookiePath) as Cookie[]
   },
 
-  getJSONFile<T>(filePath: string): T {
+  getAppSetting() {
+    const pathToSetting = path.join('config.json')
+
+    return this.getJSONFile(pathToSetting) as AppSetting
+  },
+
+  getDevTokenSesId() {
+    const cookie = this.getCookie()
+
+    const sessionId = cookie.find((c) => c.name === 'PHPSESSID')
+
+    const deviceToken = cookie.find((c) => c.name === 'device_token')
+
+    return {
+      sessionId: sessionId?.value || '',
+      deviceToken: deviceToken?.value || '',
+    }
+  },
+
+  getJSONFile<T>(filePath: string): T | null {
+    if (!fs.existsSync(filePath)) return null
+
     const result = fs.readFileSync(filePath, 'utf8')
 
     return JSON.parse(result)
