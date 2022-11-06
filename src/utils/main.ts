@@ -47,6 +47,8 @@ class Main {
 
     await this.fetchAndRecord()
 
+    console.log('\r')
+
     setTimeout(this.start.bind(this), checkStreamInterval * 1000)
   }
 
@@ -65,10 +67,10 @@ class Main {
     const modal = Object.entries(recordList)
 
     for (const [user_id, OnlineUser] of modal) {
-      if (!onlineMap[+user_id]) delete recordList[+user_id]
+      if (!onlineMap[user_id]) delete recordList[user_id]
     }
 
-    this._recordList = recordList
+    this.recordList = recordList
   }
 
   async fetchAndRecord() {
