@@ -1,4 +1,4 @@
-import { Notification, PixivUser } from './pixiv'
+import { PixivUser } from './pixiv'
 
 export type LogMsgType = 'warn' | 'info' | 'success' | 'fail' | 'error'
 
