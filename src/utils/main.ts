@@ -9,7 +9,7 @@ import fileSys from './fileSys'
 
 import { AppSetting } from '@/interfaces/common'
 import { RecordingUsers } from '@/interfaces/main'
-import { Notifications, Notification, Live } from '@/interfaces/pixiv'
+import { Notifications, Notification, Live, PixivUser } from '@/interfaces/pixiv'
 
 class Main {
   runtimeCount = 0
@@ -101,7 +101,7 @@ class Main {
     const batchPath = path.join('batch', batchName)
 
     if (isCollaboration || !fs.existsSync(batchPath)) {
-      const cmd = this.getCmd(target.live, isCollaboration)
+      const cmd = this.getCmd(target.live, user, isCollaboration)
 
       const { dir } = path.parse(batchPath)
 
@@ -162,7 +162,7 @@ class Main {
     }
   }
 
-  getCmd({ owner, id, user: target }: Live, isCol: boolean) {
+  getCmd({ owner, id }: Live, target: PixivUser, isCol: boolean) {
     const {
       recordSetting: { maxTryTimes, reTryInterval, saveFolder, prefix },
     } = this.appSetting
@@ -171,13 +171,13 @@ class Main {
 
     const url = `https://sketch.pixiv.net/@${owner.user.unique_name}/lives/${id}`
 
-    const config = `--pixiv-sessionid "${sessionId}" --pixiv-devicetoken "${deviceToken}" --pixiv-purge-credentials"`
+    const config = `--pixiv-sessionid "${sessionId}" --pixiv-devicetoken "${deviceToken}" --pixiv-purge-credentials`
 
     const colSetting = `${isCol ? `--pixiv-performer ${target.unique_name} ` : ''}`
 
     const filename = `${saveFolder}\\${prefix}${target.unique_name}_live_pixiv_%TodayYear%%TodayMonthP0%%TodayDayP0%_%hour%%time:~3,2%%time:~6,2%.ts`
 
-    const cmd = `streamlink ${config} ${colSetting} ${url} best -o ${filename}`
+    const cmd = `streamlink ${config} ${colSetting}${url} best -o ${filename}`
 
     return `
     @echo off\r

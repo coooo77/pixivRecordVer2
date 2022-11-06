@@ -19,6 +19,7 @@ export interface PixivUser {
 export interface Notification {
   id: StringTypeNum
   type: UserType
+  /** followed user */
   user: PixivUser
   target: { live: Live }
 }
@@ -29,7 +30,6 @@ export interface Live {
   performers: Performers[]
   /** who host the stream */
   owner: { user: PixivUser }
-  /** target streamer */
   user: PixivUser
 }
 
