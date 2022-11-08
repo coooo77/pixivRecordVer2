@@ -44,6 +44,8 @@ class Main {
   async start() {
     common.msg(`Check online list at ${new Date().toLocaleString()} for ${++this.runtimeCount} times`)
 
+    this._recordList = fileSys.getModal()
+
     const { checkStreamInterval } = this.appSetting
 
     await this.fetchAndRecord()
@@ -81,6 +83,22 @@ class Main {
 
     const followList = onlineList.filter((user) => user.type === 'follower_live')
 
+    // calibrate for offline streamers
+    const recordList = this.recordList
+
+    let isUserOffline = false
+
+    for (const notify of followList) {
+      if (recordList[notify.user.unique_name]) continue
+
+      delete recordList[notify.user.unique_name]
+
+      isUserOffline = true
+    }
+
+    if (isUserOffline) this.recordList = recordList
+
+    // handle streamer online
     for (const notify of followList) {
       const { unique_name, name } = notify.user
 
