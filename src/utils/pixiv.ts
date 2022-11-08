@@ -1,10 +1,6 @@
-import path from 'path'
-import puppeteer from 'puppeteer-extra'
-import plugin from 'puppeteer-extra-plugin-stealth'
+import fileSys from './fileSys.js'
 
-import fileSys from './fileSys'
-
-import { Browser, Page } from 'puppeteer'
+import { Browser, Page, launch } from 'puppeteer'
 
 class Pixiv {
   page?: Page
@@ -28,8 +24,6 @@ class Pixiv {
 
   async setCookie() {
     try {
-      this.preSet()
-
       await this.launchWeb()
 
       await this.login()
@@ -46,7 +40,7 @@ class Pixiv {
     try {
       const { puppeteerSetting } = fileSys.getAppSetting()
 
-      this.browser = await puppeteer.launch(puppeteerSetting)
+      this.browser = await launch(puppeteerSetting)
 
       this.page = await this.browser?.newPage()
     } catch (error) {
@@ -70,9 +64,9 @@ class Pixiv {
 
       await this.page?.type(this.selector.loginPasswordInput, process.env.PIXIV_PASSWORD as string, { delay: 50 })
 
-      await this.clickToNav(this.selector.loginBtnSelector)
+      await this.page?.keyboard.press('Enter')
 
-      await this.page?.setDefaultTimeout(5 * 1000)
+      await this.page?.waitForNavigation()
     } catch (error) {
       fileSys.errorHandler(error)
     }
@@ -82,16 +76,6 @@ class Pixiv {
     const cookiesObject = await this.page?.cookies()
 
     fileSys.saveJSONFile(fileSys.cookiePath, cookiesObject)
-  }
-
-  preSet() {
-    const StealthPlugin = plugin()
-
-    StealthPlugin.enabledEvasions.delete('iframe.contentWindow')
-
-    StealthPlugin.enabledEvasions.delete('navigator.plugins')
-
-    puppeteer.use(StealthPlugin)
   }
 }
 

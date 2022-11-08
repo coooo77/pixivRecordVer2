@@ -1,4 +1,4 @@
-import { PixivUser } from './pixiv'
+import { PixivUser } from './pixiv.js'
 
 export interface OnlineUser extends Pick<PixivUser, 'unique_name' | 'name'> {
   pid?: number

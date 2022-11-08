@@ -1,13 +1,11 @@
-import 'module-alias/register'
-
 import fs from 'fs'
 import dotenv from 'dotenv'
 
-import Main from '@/utils/main'
-import pixiv from '@/utils/pixiv'
-import common from '@/utils/common'
-import fileSys from '@/utils/fileSys'
-import { setCookieForAxios } from '@/utils/axios'
+import Main from './utils/main.js'
+import pixiv from './utils/pixiv.js'
+import common from './utils/common.js'
+import fileSys from './utils/fileSys.js'
+import { setCookieForAxios } from './utils/axios.js'
 
 dotenv.config()
 ;(async () => {

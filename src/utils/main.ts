@@ -1,15 +1,15 @@
 import fs from 'fs'
 import path from 'path'
 import cp from 'child_process'
+
+import api from './axios.js'
+import common from './common.js'
+import fileSys from './fileSys.js'
+
 import { AxiosError } from 'axios'
-
-import api from './axios'
-import common from './common'
-import fileSys from './fileSys'
-
-import { AppSetting } from '@/interfaces/common'
-import { RecordingUsers } from '@/interfaces/main'
-import { Notifications, Notification, Live, PixivUser } from '@/interfaces/pixiv'
+import { AppSetting } from '../interfaces/common.js'
+import { RecordingUsers } from '../interfaces/main.js'
+import { Notifications, Notification, Live, PixivUser } from '../interfaces/pixiv.js'
 
 class Main {
   runtimeCount = 0
@@ -164,14 +164,14 @@ class Main {
     }
   }
 
-  getCmd({ owner, id }: Live, target: PixivUser, isCol: boolean) {
+  getCmd({ owner }: Live, target: PixivUser, isCol: boolean) {
     const {
       recordSetting: { maxTryTimes, reTryInterval, saveFolder, prefix },
     } = this.appSetting
 
     const { sessionId, deviceToken } = fileSys.getDevTokenSesId()
 
-    const url = `https://sketch.pixiv.net/@${owner.user.unique_name}/lives/${id}`
+    const url = `https://sketch.pixiv.net/@${owner.user.unique_name}`
 
     const config = `--pixiv-sessionid "${sessionId}" --pixiv-devicetoken "${deviceToken}" --pixiv-purge-credentials`
 

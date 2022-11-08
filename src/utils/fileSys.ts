@@ -1,8 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 
-import { RecordingUsers } from '@/interfaces/main'
-import { AppSetting, Cookie } from '@/interfaces/common'
+import { RecordingUsers } from '../interfaces/main.js'
+import { AppSetting, Cookie } from '../interfaces/common.js'
 
 export default {
   modalPath: path.join('modal', 'modal.json'),

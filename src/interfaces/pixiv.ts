@@ -1,4 +1,4 @@
-import { StringTypeNum } from './common'
+import { StringTypeNum } from './common.js'
 
 /**
  * follow - user who follows you

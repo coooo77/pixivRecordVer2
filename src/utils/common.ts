@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 
 /** types */
-import { LogMsgType } from '@/interfaces/common'
+import { LogMsgType } from '../interfaces/common.js'
 
 export default {
   msg(msg: string, msgType: LogMsgType = 'info') {
