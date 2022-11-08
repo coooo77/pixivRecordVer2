@@ -22,6 +22,8 @@ export interface RecordSetting {
   reTryInterval: number
   saveFolder: string
   prefix: string
+  /** remove files less than X megabytes */
+  removeFilesLessThan?: number
 }
 
 export interface Cookie {

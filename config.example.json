@@ -8,7 +8,8 @@
     "maxTryTimes": 120,
     "reTryInterval": 30,
     "saveFolder": "C:\\path\\to\\your\\save\\dir",
-    "prefix": "@"
+    "prefix": "@",
+    "removeFilesLessThan": 10
   },
   "blockList": []
 }

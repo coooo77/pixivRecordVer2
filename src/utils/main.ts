@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import trash from 'trash'
 import cp from 'child_process'
 
 import api from './axios.js'
@@ -139,7 +140,41 @@ class Main {
       delete latestList[user.unique_name]
 
       this.recordList = latestList
+
+      const { removeFilesLessThan } = this.appSetting.recordSetting
+
+      if (removeFilesLessThan && removeFilesLessThan > 0) {
+        this.removeFilesLessThan(user, removeFilesLessThan)
+      }
     })
+  }
+
+  async removeFilesLessThan(user: PixivUser, less: number) {
+    const { saveFolder } = this.appSetting.recordSetting
+
+    const files = fs.readdirSync(saveFolder).filter((name) => {
+      const isTsExt = path.parse(name).ext === '.ts'
+
+      const isTarget = name.includes(user.unique_name)
+
+      return isTsExt && isTarget
+    })
+
+    const removeList: string[] = []
+
+    for (const file of files) {
+      const filePath = path.join(saveFolder, file)
+
+      const { size } = fs.statSync(filePath)
+
+      const sizeInMegaBytes = size / (1024 * 1024)
+
+      if (sizeInMegaBytes > less) continue
+
+      removeList.push(filePath)
+    }
+
+    trash(removeList)
   }
 
   async getOnlineList(): Promise<Notification[]> {
