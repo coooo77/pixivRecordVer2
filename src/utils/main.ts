@@ -15,8 +15,6 @@ import { Notifications, Notification, Live, PixivUser } from '../interfaces/pixi
 class Main {
   runtimeCount = 0
 
-  authorizeRetry = 0
-
   _recordList: RecordingUsers = {}
 
   _appSetting: AppSetting | null = null
@@ -201,17 +199,7 @@ class Main {
 
       return res.data.data.notifications
     } catch (error) {
-      const err = error as AxiosError
-
-      this.authorizeRetry++
-
-      if (err.response?.status === 401 && this.authorizeRetry < 6) {
-        fileSys.clearFolder('batch')
-
-        await common.wait(5)
-
-        return await this.getOnlineList()
-      }
+      fileSys.errorHandler(error)
 
       throw error
     }

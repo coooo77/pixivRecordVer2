@@ -1,4 +1,5 @@
 import { PixivUser } from './pixiv.js'
+import { AxiosRequestConfig } from 'axios'
 
 export type LogMsgType = 'warn' | 'info' | 'success' | 'fail' | 'error'
 
@@ -33,3 +34,7 @@ export interface Cookie {
 
 /** e.g. '339676447' */
 export type StringTypeNum = string
+
+export interface RequestConfig extends AxiosRequestConfig {
+  _retry: boolean
+}
