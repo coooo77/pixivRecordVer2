@@ -30,7 +30,7 @@ class Pixiv {
 
       await this.getAuth()
     } catch (error) {
-      fileSys.errorHandler(error)
+      fileSys.errorHandler(error, 'pixiv > setCookie')
     } finally {
       await this.browser?.close()
     }
@@ -44,7 +44,7 @@ class Pixiv {
 
       this.page = await this.browser?.newPage()
     } catch (error) {
-      fileSys.errorHandler(error)
+      fileSys.errorHandler(error, 'pixiv > launchWeb')
     }
   }
 
@@ -68,7 +68,7 @@ class Pixiv {
 
       await this.page?.waitForNavigation()
     } catch (error) {
-      fileSys.errorHandler(error)
+      fileSys.errorHandler(error, 'pixiv > login')
     }
   }
 

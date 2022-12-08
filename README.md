@@ -24,7 +24,9 @@ record drawing streams in [Pixiv](https://www.pixiv.net/).
     // path to save videos
     "saveFolder": "C:\\path\\to\\your\\save\\dir",
     // custom prefix for videos downloaded
-    "prefix": "@"
+    "prefix": "@",
+    // remove files whose size less than X megabytes after end of stream
+    "removeFilesLessThan": 10
   },
   // exclude streamers, not to record them, e.g. user_xxxx1234, name of user
   "blockList": []

@@ -11,7 +11,7 @@ export default {
 
   clearFolder(folderPath: string) {
     if (!fs.existsSync(folderPath)) return
-    
+
     for (const file of fs.readdirSync(folderPath)) {
       fs.unlinkSync(path.join(folderPath, file))
     }
@@ -72,7 +72,7 @@ export default {
     fs.writeFileSync(filePath, JSON.stringify(data), 'utf8')
   },
 
-  errorHandler(error: any, errorLogPath = path.join('error')) {
+  errorHandler(error: any, triggerFnName: string = '', errorLogPath = path.join('error')) {
     this.makeDirIfNotExist(errorLogPath)
 
     const log = JSON.parse(JSON.stringify(error || {}))
@@ -80,6 +80,8 @@ export default {
     log.date = new Date().toLocaleString()
 
     log.message = error?.message || 'no error message'
+
+    log.triggerFnName = triggerFnName
 
     const errFilePath = path.join(errorLogPath, `${new Date().getTime()}.json`)
 

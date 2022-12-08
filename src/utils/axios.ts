@@ -32,7 +32,7 @@ instance.interceptors.response.use(
 
       return instance(originalRequest)
     } else {
-      fileSys.errorHandler(error)
+      fileSys.errorHandler(error, 'instance.interceptors.response')
     }
 
     return Promise.reject(error)

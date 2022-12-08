@@ -40,17 +40,21 @@ class Main {
   }
 
   async start() {
-    common.msg(`Check online list at ${new Date().toLocaleString()} for ${++this.runtimeCount} times`)
+    const { checkStreamInterval = 30 } = this.appSetting
 
-    this._recordList = fileSys.getModal()
+    try {
+      common.msg(`Check online list at ${new Date().toLocaleString()} for ${++this.runtimeCount} times`)
 
-    const { checkStreamInterval } = this.appSetting
+      this._recordList = fileSys.getModal()
 
-    await this.fetchAndRecord()
+      await this.fetchAndRecord()
 
-    console.log('\r')
-
-    setTimeout(this.start.bind(this), checkStreamInterval * 1000)
+      console.log('\r')
+    } catch (error) {
+      fileSys.errorHandler(error, 'main > start')
+    } finally {
+      setTimeout(this.start.bind(this), checkStreamInterval * 1000)
+    }
   }
 
   async init() {
@@ -199,7 +203,7 @@ class Main {
 
       return res.data.data.notifications
     } catch (error) {
-      fileSys.errorHandler(error)
+      fileSys.errorHandler(error, 'main > getOnlineList')
 
       throw error
     }
@@ -212,19 +216,20 @@ class Main {
 
     const { sessionId, deviceToken } = fileSys.getDevTokenSesId()
 
-    const url = `https://sketch.pixiv.net/@${owner.user.unique_name}`
+    const url = `https://sketch.pixiv.net/@${isCol ? owner.user.unique_name : '%name%'}`
 
     const config = `--pixiv-sessionid "${sessionId}" --pixiv-devicetoken "${deviceToken}" --pixiv-purge-credentials`
 
-    const colSetting = `${isCol ? `--pixiv-performer ${target.unique_name} ` : ''}`
+    const colSetting = `${isCol ? `--pixiv-performer %name% ` : ''}`
 
-    const filename = `${saveFolder}\\${prefix}${target.unique_name}_live_pixiv_%TodayYear%%TodayMonthP0%%TodayDayP0%_%hour%%time:~3,2%%time:~6,2%.ts`
+    const filename = `${saveFolder}\\${prefix}%name%_live_pixiv_%TodayYear%%TodayMonthP0%%TodayDayP0%_%hour%%time:~3,2%%time:~6,2%.ts`
 
     const cmd = `streamlink ${config} ${colSetting}${url} best -o ${filename}`
 
     return `
     @echo off\r
     set count=0\r
+    set name=${target.unique_name}\r
     :loop\r
     set hour=%time:~0,2%\r
     set TodayYear=%date:~0,4%\r

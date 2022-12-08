@@ -19,9 +19,5 @@ dotenv.config()
 
   await common.wait(5)
 
-  try {
-    await Main.start()
-  } catch (error) {
-    fileSys.errorHandler(error)
-  }
+  await Main.start()
 })()
