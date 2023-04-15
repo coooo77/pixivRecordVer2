@@ -32,7 +32,9 @@ export default {
 
   wait: (seconds: number) => new Promise((resolve) => setTimeout(resolve, seconds * 1000)),
 
-  isProcessRunning(pid: number) {
+  isProcessRunning(pid?: number) {
+    if (typeof pid === 'undefined') return false
+
     try {
       process.kill(pid, 0)
       return true

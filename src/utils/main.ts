@@ -2,12 +2,12 @@ import fs from 'fs'
 import path from 'path'
 import trash from 'trash'
 import cp from 'child_process'
+import { cloneDeep } from 'lodash-es'
 
 import api from './axios.js'
 import common from './common.js'
 import fileSys from './fileSys.js'
 
-import { AxiosError } from 'axios'
 import { AppSetting } from '../interfaces/common.js'
 import { RecordingUsers } from '../interfaces/main.js'
 import { Notifications, Notification, Live, PixivUser } from '../interfaces/pixiv.js'
@@ -46,6 +46,8 @@ class Main {
       common.msg(`Check online list at ${new Date().toLocaleString()} for ${++this.runtimeCount} times`)
 
       this._recordList = fileSys.getModal()
+
+      this.checkCmdIsAlive()
 
       await this.fetchAndRecord()
 
@@ -166,6 +168,8 @@ class Main {
       if (removeFilesLessThan && removeFilesLessThan > 0) {
         this.removeFilesLessThan(user, removeFilesLessThan)
       }
+
+      if (isCollaboration) fs.unlinkSync(batchPath)
     })
   }
 
@@ -244,6 +248,22 @@ class Main {
     @ping 127.0.0.1 -n ${reTryInterval} -w 1000 > nul\r
     goto loop
     `
+  }
+
+  checkCmdIsAlive() {
+    const recordList = cloneDeep(this.recordList)
+
+    let shouldUpdateList = false
+
+    for (const [pixivUserName, onlineUserData] of Object.entries(recordList)) {
+      if (common.isProcessRunning(onlineUserData.pid)) continue
+
+      delete recordList[pixivUserName]
+
+      shouldUpdateList = true
+    }
+
+    if (shouldUpdateList) this.recordList = recordList
   }
 }
 
