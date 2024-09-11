@@ -101,5 +101,6 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
   "exclude": ["node_modules", "dist", "issues"],
+  "include": ["src/**/*"],
   "extends": "@tsconfig/node16/tsconfig.json"
 }

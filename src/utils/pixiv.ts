@@ -9,8 +9,8 @@ class Pixiv {
 
   selector = {
     loginBtnSelector: 'form > button',
-    loginAccountInput: 'form input[autocomplete=username]',
-    loginPasswordInput: 'form input[autocomplete=current-password]',
+    loginAccountInput: 'form input[autocomplete~=username]',
+    loginPasswordInput: 'form input[autocomplete~=current-password]',
     btnToLoginPage: '#Welcome > div.buttons > button:nth-child(2)',
   }
 

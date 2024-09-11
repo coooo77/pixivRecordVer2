@@ -18,13 +18,19 @@ export default {
   },
 
   getModal(): RecordingUsers {
-    const modal = this.getJSONFile<RecordingUsers>(this.modalPath)
+    try {
+      const modal = this.getJSONFile<RecordingUsers>(this.modalPath)
 
-    if (!modal) {
+      if (!modal) {
+        this.saveJSONFile(this.modalPath, {})
+      }
+
+      return modal || {}
+    } catch (error) {
       this.saveJSONFile(this.modalPath, {})
-    }
 
-    return modal || {}
+      return {}
+    }
   },
 
   getCookie() {
